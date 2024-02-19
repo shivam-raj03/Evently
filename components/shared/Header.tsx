@@ -11,7 +11,7 @@ import { sidebarLinks } from '../constants/sidebarLink';
 
 const Header = () => {
   const user = useUser();
-  console.log(user);
+  console.log('inside header', user);
   const session = useSession();
   return (
     <header className='w-full border-b'>
