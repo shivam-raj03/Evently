@@ -9,7 +9,7 @@ import Order from "../Models/Order";
 export interface createUserParams {
     clerkId: String,
     email: String,
-    username: String,
+    userName: String,
     firstName: String,
     lastName?: String,
     photo?: String
@@ -30,7 +30,7 @@ export const createUser = async (user: createUserParams) => {
 }
 
 export interface updateUserParams {
-    username: String,
+    userName: String,
     firstName: String,
     lastName?: String,
     photo?: String
