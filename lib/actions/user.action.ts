@@ -17,10 +17,14 @@ export interface createUserParams {
 
 export const createUser = async (user: createUserParams) => {
     try {
+        console.log('before connecting db');
         await connectDB();
+        console.log('after connecting db');
         const newUser = await User.create(user);
+        console.log('after creating user');
         return JSON.parse(JSON.stringify(newUser));
     } catch (error) {
+        console.log('went to error block');
         handleError(error);
     }
 }
