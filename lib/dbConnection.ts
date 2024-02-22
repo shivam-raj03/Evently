@@ -3,6 +3,7 @@ import mongoose  from "mongoose";
 let isConnected = false;
 
 export const connectDB = async () => {
+    
     if(!process.env.MONGODB_URI){
         throw new Error('Missing mongodb uri enviornment variable');
     }
@@ -11,7 +12,7 @@ export const connectDB = async () => {
         return;
     }
     try {
-        await mongoose.connect(process.env.MONGODB_URI, {dbName: 'evently'});
+        await mongoose.connect(process.env.MONGODB_URI);
 
         isConnected = true;
 

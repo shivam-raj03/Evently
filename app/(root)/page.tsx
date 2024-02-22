@@ -2,6 +2,7 @@ import Categories from "@/components/shared/Categories";
 import SwiperComponent from "@/components/shared/SwiperComponent";
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/shared/SearchBar";
+import { connectDB } from "@/lib/dbConnection";
 
 
 export default function Home() {
