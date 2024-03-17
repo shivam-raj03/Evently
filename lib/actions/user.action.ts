@@ -6,6 +6,7 @@ import User from "../Models/User";
 import Event from "../Models/Event";
 import Order from "../Models/Order";
 
+
 export interface createUserParams {
     clerkId: String,
     email: String,
@@ -79,13 +80,34 @@ export const deleteUser = async (clerkId: string) => {
 
 export async function getUserById(userId: string) {
     try {
-      await connectDB()
-  
-      const user = await User.findById(userId)
-  
-      if (!user) throw new Error('User not found')
-      return JSON.parse(JSON.stringify(user))
+        
+        await connectDB()
+        
+        const user = await User.findById(userId)
+    
+        if (!user) throw new Error('User not found')
+        
+        return JSON.parse(JSON.stringify(user))
     } catch (error) {
       handleError(error)
     }
   }
+
+
+export async function getUserByClerkId(clerkId: string) {
+    try {
+        await connectDB();
+
+        const user = await User.findOne({ clerkId: clerkId });
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        return JSON.parse(JSON.stringify(user));
+
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

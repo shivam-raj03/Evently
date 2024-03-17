@@ -11,8 +11,8 @@ import { sidebarLinks } from '../constants/sidebarLink';
 
 const Header = () => {
   const user = useUser();
-  console.log('inside header', user);
-  const session = useSession();
+  //console.log('inside header', user);
+  //const session = useSession();
   return (
     <header className='w-full border-b'>
       <div className='my-4 flex items-center justify-between'>

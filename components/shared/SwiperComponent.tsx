@@ -27,9 +27,9 @@ const SwiperComponent = () => {
       // onSwiper={(swiper) => console.log(swiper)}
       
     >
-      {swiperContent.map((content)=> {
+      {swiperContent.map((content, idx)=> {
           return (
-            <SwiperSlide>
+            <SwiperSlide key={idx}>
                 <div className='h-screen w-full -mt-10 max-sm:mt-0 max-sm:pt-4 flex flex-1 items-center justify-center gap-10 max-sm:gap-6 max-sm:flex-col'>
                   <div className='flex flex-col gap-10 max-sm:gap-4 text-center w-[550px] max-sm:w-auto'>
                     <h1 className='text-5xl font-bold max-sm:text-3xl bg-gradient-to-br from-violet-600 to-primary bg-clip-text text-transparent'>

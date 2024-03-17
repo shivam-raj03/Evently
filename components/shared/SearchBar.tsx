@@ -2,6 +2,7 @@
 import React from 'react';
 import Image  from 'next/image';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useDebouncedCallback} from 'use-debounce';
 
 
 interface placeHolderType {
@@ -14,7 +15,8 @@ const SearchBar = ({placeHolder} : placeHolderType) => {
     const pathName = usePathname();
     const {replace } = useRouter();
     
-    const handleChange = (query: string) => {
+    const handleChange = useDebouncedCallback((query: string) => {
+        console.log(query);
         const params = new URLSearchParams(searchParams);
         if(query){
             params.set('query', query);
@@ -23,7 +25,7 @@ const SearchBar = ({placeHolder} : placeHolderType) => {
         }
 
         replace(`${pathName}?${params.toString()}`);
-    }
+    }, 700)
   
   
     
@@ -38,7 +40,7 @@ const SearchBar = ({placeHolder} : placeHolderType) => {
                 width={24}
                 height={24}
                 className='mx-2'
-        />
+            />
         </div>
     </div>
     
