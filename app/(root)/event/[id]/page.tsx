@@ -5,6 +5,13 @@ import React from 'react'
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { dateConverter, timeFormatConverter } from '@/lib/utils';
+import Link from 'next/link';
+import { RiExternalLinkLine } from "react-icons/ri";
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import LikeCartButton from '@/components/shared/LikeCartButton';
+
+
+
 
 interface paramTypes {
     params: {id: string}
@@ -32,8 +39,6 @@ const Page = async ({params} : paramTypes) => {
     const startTime = timeFormatConverter(event.startTime);
     const endTime = timeFormatConverter(event.endTime);
 
-
-    
     
     return (
         <div className='mx-[20%] flex flex-col justify-center items-center p-3'>
@@ -47,16 +52,26 @@ const Page = async ({params} : paramTypes) => {
                 />
             </div>
             <div className='w-full'>
-                <div className='flex gap-2 mt-6  flex-wrap justify-start items-center'>
-                    <Badge className='text-base'>
-                    {event.isFree ? 'Free': `₹ ${event.price}`}
-                    </Badge >
-                    <Badge variant='secondary' className='text-base'>
-                    {event.category.name}
-                    </Badge>
-                    <Badge variant='secondary' className='text-base'>
-                    {`By ${event.organizer.firstName} ${event.organizer.lastName}`}
-                    </Badge>
+                <div className='flex flex-wrap  mt-6 justify-between items-center'>
+                    <div className='flex gap-2 flex-wrap justify-start items-center'>
+                        <Badge className='text-base'>
+                        {event.isFree ? 'Free': `₹ ${event.price}`}
+                        </Badge >
+                        <Badge variant='secondary' className='text-base'>
+                        {event.category.name}
+                        </Badge>
+                        <Badge variant='secondary' className='text-base'>
+                        {`By ${event.organizer.firstName} ${event.organizer.lastName}`}
+                        </Badge>
+                    </div>
+                </div>
+                <div className='flex flex-wrap  mt-6 justify-between items-center'>
+                    <LikeCartButton 
+                        event={event}
+                        user={user}
+                        likedEvent={likedEvent}
+                        option='eventPage'
+                    />
                 </div>
                
                 <h3 className='font-semibold text-4xl mt-6'>
@@ -65,8 +80,8 @@ const Page = async ({params} : paramTypes) => {
                 <p className='text-m font-normal mt-6 mb-4'>
                     {event.description}
                 </p>
-                <div className={`flex gap-4 font-semibold justify-start my-3 items-center text-2xl flex-wrap ${!eventStillVallid ? 'text-primary' : ''}`}>
-                    <div>
+                <div className={`flex gap-4 font-semibold justify-start my-3 items-center text-xl flex-wrap ${!eventStillVallid ? 'text-primary' : ''}`}>
+                    <div>   
                         {
                         eventStillVallid ? startDate : 'Expired'
                         }
@@ -75,9 +90,26 @@ const Page = async ({params} : paramTypes) => {
                         {eventStillVallid && `${startTime} - ${endTime}`}
                     </div>
                 </div>
-                <div className='text-2xl'>
-                    {event.isOnline ? "Online Event" : `${event.location}`}
+                <div className='text-xl mb-3'>
+                    { event.isOnline ? 
+                        <Link href={event.url} className='text-blue-600 text-m flex'>
+                            Online Event <RiExternalLinkLine className='mt-1 ml-1'/>
+                        </Link>
+                        : 
+                        `${event.location}`
+                    }
                 </div>
+                
+                <div className='flex flex-wrap gap-2'>
+                    {event.tags.map((tag: any, idx: any) => {
+                        return (
+                            <Badge variant='secondary' className='' key={idx}>
+                                {tag.name}
+                            </Badge>
+                        )
+                    })}
+                </div>
+                
              
             </div>
         </div>

@@ -1,4 +1,3 @@
-'use client'
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 import EventCard from './EventCard';
@@ -10,9 +9,9 @@ interface propTypes {
 
 const EventCards = (props: propTypes) => {
     
-    const searchParams = useSearchParams();
+    //const searchParams = useSearchParams();
     
-
+    
     return (    
     <div className='flex justify-evenly items-center gap-10 flex-wrap'>
         {props.events.map((evt: any) => {

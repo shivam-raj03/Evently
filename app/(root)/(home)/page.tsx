@@ -21,10 +21,12 @@ interface searchParamsProps {
 export default async function Home({searchParams }: searchParamsProps) {  
   let listedEvents = []
   let totalPages = 0;
-
+  console.log(searchParams)
   if(searchParams.category){
+    console.log('inside',searchParams.category)
     const category = await getCategoryByName(searchParams.category);
-    const listedEvents = await getEventsByCategory(category._id); 
+    //console.log(category)
+    listedEvents = await getEventsByCategory(category?._id); 
   } else {
     const result = await getEvents(
       searchParams.query ? searchParams.query : "",

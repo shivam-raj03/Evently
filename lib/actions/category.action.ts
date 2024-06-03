@@ -11,7 +11,7 @@ export const getCategoryByName = async (catName: string) => {
         await connectDB();
 
         const category = await Category.findOne({name: catName})
-
+        console.log(category);
         if(!category){
             return null;
         }
@@ -21,3 +21,5 @@ export const getCategoryByName = async (catName: string) => {
         handleError(error);
     }
 }
+
+

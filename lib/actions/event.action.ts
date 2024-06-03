@@ -31,7 +31,8 @@ export const createEvent = async (eventData: any) => {
 
         const tagsId: any = [];
 
-        for(const inputTag in data.tags){
+        for(const idx in data.tags){
+            const inputTag = data.tags[idx]
             const tag = await Tags.findOne({name: inputTag});
             if(tag){
                 tagsId.push(tag._id);
@@ -127,6 +128,54 @@ export async function getEventById(id: string) {
             .populate("tags", "name");
 
         return JSON.parse(JSON.stringify(event));
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function getEventsByUserId(userId: string){
+    try {
+        await connectDB();
+
+        const events = await Event.find({organizer: userId})
+            .populate("category", "name")
+            .populate("organizer", "firstName lastName email")
+            .populate("tags", "name");
+
+    return JSON.parse(JSON.stringify(events));
+
+
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+
+export async function deleteEventById(eventId: string){
+    try {
+        await connectDB();
+
+        const events = await Event.findByIdAndDelete(eventId)
+        await Tags.updateMany({ events: eventId }, { $pull: { events: eventId } });
+
+        await User.updateMany({ likedEvents: eventId }, { $pull: { likedEvents: eventId } });
+
+        // add refund logic here
+
+        await Order.deleteMany({ event: eventId });
+
+        revalidatePath("/");
+        revalidatePath("/profile");
+        revalidatePath("/tickets");
+        revalidatePath("/likes");
+
+        return JSON.parse(JSON.stringify(event));
+
+        
+
+
     } catch (error) {
         console.log(error);
         throw error;

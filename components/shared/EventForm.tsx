@@ -41,8 +41,10 @@ import {format } from 'date-fns';
 
 import { FileUploader } from './FileUploader';
 import clsx from 'clsx';
-import { createEvent } from '@/lib/actions/event.action';
+import { createEvent, getEventById } from '@/lib/actions/event.action';
 import { useRouter } from 'next/navigation';
+import { title } from 'process';
+import { currentUser } from '@clerk/nextjs';
 
 
 
@@ -75,6 +77,7 @@ const formSchema = z.object({
 interface props {
     userId: string,
     type: 'Create' | 'Update'
+    event? : any
 }
 
 
@@ -87,32 +90,74 @@ const EventForm = (props: props) => {
 
   const { startUpload } = useUploadThing("imageUploader");
 
+  const currEvent = props.event;
+  const currTags = currEvent?.tags.map((t : any)  => {
+    return t.name
+  })
+
+  const stDate = new Date(currEvent?.startDate)
+  const enDate = new Date(currEvent?.endDate)
+
+
+  
+  const defaultValues = props.type === 'Update' ? 
+    
+  {
+    title: currEvent.title,
+    category: currEvent.category.name,
+    tags: currTags,
+    description: currEvent.description,
+    photo: currEvent.photo,
+    isOnline: currEvent.isOnline,
+    location: currEvent.location,
+    landmark: currEvent.landmark,
+    startDate: stDate,
+    endDate: enDate,
+    duration: undefined,
+    totalCapacity: currEvent.totalCapacity,
+    isFree: currEvent.isFree,
+    price: currEvent.price,
+    ageRestriction: String(currEvent.ageRestriction),
+    url: currEvent.url,
+    startTime: currEvent.startTime,
+    endTime: currEvent.endTime
+
+  }
+  
+  :
+  
+  {
+    title: '',
+    category: undefined,
+    tags: [],
+    description: '',
+    photo: undefined,
+    isOnline: false,
+    location: '',
+    landmark: '',
+    startDate: undefined,
+    endDate: undefined,
+    duration: undefined,
+    totalCapacity: undefined,
+    isFree: false,
+    price: undefined,
+    ageRestriction: undefined,
+    url: ''
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: '',
-      category: undefined,
-      tags: [],
-      description: '',
-      photo: undefined,
-      isOnline: false,
-      location: '',
-      landmark: '',
-      startDate: undefined,
-      endDate: undefined,
-      duration: undefined,
-      totalCapacity: undefined,
-      isFree: false,
-      price: undefined,
-      ageRestriction: undefined,
-      url: ''
-    },
+    defaultValues,
+    
   });
+  
+
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
     let uploadedImageUrl = values.photo;
-    
+    console.log(values);
     try {
       
       if(files.length > 0){
@@ -184,7 +229,6 @@ const EventForm = (props: props) => {
           e.preventDefault();
           const tagInput = e.target;
           const tagValue = e.target.value.trim().toLowerCase();
-
           if(tagValue.length > 15){
             return (form.setError('tags', {
               type: 'required',
@@ -235,7 +279,7 @@ const EventForm = (props: props) => {
               <FormItem className='w-full'>
                 <FormLabel>Title <span className="text-red-700">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Write a catchy title for your event" {...field} />
+                  <Input placeholder="Write a catchy title for your event"  {...field}  />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -266,8 +310,10 @@ const EventForm = (props: props) => {
                     <Textarea 
                       onKeyDown={(e) => handleKeyDown(e, field)}
                       className='min-h-min'
+                     
                     />
                     {
+                      
                       field.value.length > 0 && (
                         <div className='flex items-center justify-start gap-2 flex-wrap uppercase'>
                           {field.value.map((tag, idx) => {
@@ -306,7 +352,8 @@ const EventForm = (props: props) => {
                   <FormControl>
                     <Textarea
                       className='h-72 max-sm:h-auto' 
-                      placeholder="Write a description of event details." {...field}
+                      placeholder="Write a description of event details."
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />

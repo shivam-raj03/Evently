@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { auth } from '@clerk/nextjs';
 import User from '@/lib/Models/User';
@@ -8,6 +7,8 @@ import Image from 'next/image';
 import { Badge } from '../ui/badge';
 import {format } from 'date-fns';
 import { dateConverter, timeFormatConverter } from '@/lib/utils';
+import LikeCartButton from './LikeCartButton';
+import DeleteEventButton from './DeleteEventButton';
 
 
 interface eventProps  {
@@ -19,10 +20,10 @@ interface eventProps  {
 
 
 
-const EventCard = async ({event, page} : eventProps) => {
+const EventCard =  async ({event, page} : eventProps) => {
     
-    const [likedEvent, setLikedEvent] = useState(false);
-
+    let likedEvent = false;
+    let currUser = null;
     
     const dateNow = new Date();
     const eventDate = new Date(event.startDate);
@@ -32,23 +33,24 @@ const EventCard = async ({event, page} : eventProps) => {
     const startTime = timeFormatConverter(event.startTime);
     const endTime = timeFormatConverter(event.endTime);
 
+    const { userId } = auth();
 
-    useEffect(() => {
-      const fetchLikedEvents = async () => {
-        const { userId } = auth();
-        let currentUser = null;
+    if(userId){
+        currUser = await getUserByClerkId(userId);
+        likedEvent = await currUser.likedEvents.includes(event._id);
+    }
 
-        if(userId){
-            currentUser = await getUserByClerkId(userId);
-            setLikedEvent(currentUser.likedEvents.includes(event._id))
-        }
-      }
-      fetchLikedEvents();
-    }, [])
+    //console.log(typeof window === 'undefined');
+    // useEffect(() => {
+    //   const fetchLikedEvents = async () => {
+        
+    //   }
+    //   fetchLikedEvents();
+    // }, [])
     return (
     <div className='flex flex-col border h-96 w-96 rounded-md hover:scale-95 transition-all shadow-md relative'>
       <div className='flex flex-col h-[92%]' >
-        <div className='w-full h-[55%] overflow-hidden'>
+        <div className='w-full h-[55%] overflow-hidden relative'>
           <Link href={`event/${event._id}`}>
             <Image 
                 src={event.photo}
@@ -57,7 +59,9 @@ const EventCard = async ({event, page} : eventProps) => {
                 height={1280}
                 className='rounded-md'
             />
+            <LikeCartButton event={event} user={currUser} likedEvent={likedEvent}/>
           </Link>
+          
         </div>
         
        
@@ -70,9 +74,13 @@ const EventCard = async ({event, page} : eventProps) => {
                 <Badge variant='secondary'>
                   {event.category.name}
                 </Badge>
-                <Badge variant='secondary'>
-                  {event.landmark ? event.landmark : "Online"}
-                </Badge>
+                {
+                  event.landmark && 
+                  <Badge variant='secondary'>
+                    {event.landmark}
+                  </Badge>
+                }
+                
             </div>
             <div className='flex gap-4 justify-start items-center text-sm flex-wrap m-3 '>
               <div>
@@ -97,8 +105,9 @@ const EventCard = async ({event, page} : eventProps) => {
         <Badge
           variant={"secondary"}
           className="mx-3 w-fit"
-        >{`${event.organizer.firstName} ${event.organizer.lastName}`}</Badge>
-        {/* {page === "profile" && <DeleteEventButton event={event} />} */}
+        >{`${event.organizer.firstName} ${event.organizer.lastName}`}
+        </Badge>
+        {page === "profile" && <DeleteEventButton event={event} />}
       </div>
     </div>
   )

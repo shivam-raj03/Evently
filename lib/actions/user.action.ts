@@ -5,6 +5,7 @@ import { handleError } from "../utils"
 import User from "../Models/User";
 import Event from "../Models/Event";
 import Order from "../Models/Order";
+import { revalidatePath } from "next/cache";
 
 
 export interface createUserParams {
@@ -109,5 +110,37 @@ export async function getUserByClerkId(clerkId: string) {
     } catch (error) {
         console.log(error);
         throw error;
+    }
+}
+
+export async function likeUnlikeEvent(userId: string, eventId: string) {
+    try {
+        await connectDB();
+
+        const user = await User.findById(userId);
+
+        const event = await Event.findById(eventId);
+        
+        if(!user){
+            throw new Error('User not logged in');
+        }
+        if(!event){
+            throw new Error('Event not found');
+        }
+     
+        const alreadyLiked = await User.findOne({_id: userId, likedEvents: eventId});
+       
+        if(!alreadyLiked){
+            await User.findByIdAndUpdate(userId, {$push: { likedEvents: eventId}});
+        } else {
+            await User.findByIdAndUpdate(userId, {$pull: { likedEvents: eventId}});
+        }   
+        
+        revalidatePath('/')
+        //revalidatePath('/like')
+       
+
+    } catch (error) {
+        handleError(error);
     }
 }

@@ -16,7 +16,7 @@ const SearchBar = ({placeHolder} : placeHolderType) => {
     const {replace } = useRouter();
     
     const handleChange = useDebouncedCallback((query: string) => {
-        console.log(query);
+        //console.log(query);
         const params = new URLSearchParams(searchParams);
         if(query){
             params.set('query', query);
