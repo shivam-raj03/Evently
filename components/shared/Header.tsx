@@ -4,15 +4,22 @@ import React from 'react';
 import Image from 'next/image';
 import { SignedIn, SignedOut, UserButton, useSession, useUser} from '@clerk/nextjs';
 import { Button } from '../ui/button';
-//import NavItems from './NavItems';
 import MobileNav from './MobileNav';
 import { sidebarLinks } from '../constants/sidebarLink';
+import { useTheme } from 'next-themes';
+import { Sun, Moon } from 'lucide-react';
 
 
 const Header = () => {
   const user = useUser();
-  //console.log('inside header', user);
-  //const session = useSession();
+  
+  const { theme, setTheme } = useTheme()
+  //const [currTheme, setCurrTheme] = useState('dark');
+
+  const handleTheme = () => {
+      theme === 'dark' ? setTheme('light') : setTheme('dark')
+
+  }
   return (
     <header className='w-full border-b'>
       <div className='my-4 flex items-center justify-between'>
@@ -45,7 +52,14 @@ const Header = () => {
                     )
                 })}
             </div>
-            
+           
+            <div onClick={handleTheme}>
+              {theme === 'light' ? 
+                  <Moon className="h-[1.2rem] w-[1.2rem] scale-100 hover:cursor-pointer" />
+                  :
+                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 hover:cursor-pointer" />
+              }
+            </div>
             <SignedIn>
               <UserButton afterSignOutUrl='/' />
               <MobileNav/>
