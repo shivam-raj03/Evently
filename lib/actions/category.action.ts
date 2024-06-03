@@ -10,6 +10,11 @@ export const getCategoryByName = async (catName: string) => {
     try {
         await connectDB();
 
+        // const lookUp = {
+        //     'business' : 'Business'
+        // }
+
+
         const category = await Category.findOne({name: catName})
         console.log(category);
         if(!category){
